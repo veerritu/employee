@@ -1,1 +1,65 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+@import '~@swimlane/ngx-datatable/index.css';
+@import '~@swimlane/ngx-datatable/themes/bootstrap.scss';
+@import '~@swimlane/ngx-datatable/themes/material.scss';
+@import '~@swimlane/ngx-datatable/themes/dark.scss';
+@import '~@swimlane/ngx-datatable/assets/icons.css';
+
+$primary : #244B94;
+
+.ngx-datatable.material {
+    transition: box-shadow 250ms ease-in-out;
+    box-shadow: 0.35rem 0.35rem 0 rgba(0, 0, 0, 0.1);
+    border-radius: 0.17rem;
+    &:hover {
+      box-shadow: 0.5rem 0.5rem 0 rgba(0, 0, 0, 0.3);
+    }
+    .empty-row {
+      text-align: center;
+      height: auto;
+      padding: 1.5rem 1.2rem 0.5rem;
+    }
+    .datatable-header {
+      height: auto !important;
+      .datatable-header-cell {
+          font-size: 1.125rem;
+          font-weight: 600;
+          border: 1px solid rgba(0, 0, 0, 0.13);
+      }
+    }
+    .datatable-body {
+      .datatable-body-row {
+  
+        .datatable-body-cell {
+          font-size: 1rem;
+          font-weight: 500;
+          border: 1px solid rgba(0, 0, 0, 0.13);
+          i {
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+          }
+        }
+      }
+    }
+    .datatable-footer {
+      border-top: none;
+      text-align: right;
+    }
+  }
+  
+  .ngx-datatable .datatable-body-row, .ngx-datatable .datatable-header-inner, .ngx-datatable .datatable-row-center {
+    align-items: center;
+  }
+  .ngx-datatable .datatable-body .datatable-body-row {
+    cursor: pointer;
+  }
+  
+  .ngx-datatable.material:not(.cell-selection) .datatable-body-row:hover, .ngx-datatable.material:not(.cell-selection) .datatable-body-row:hover .datatable-row-group {
+    .datatable-body-cell-label {
+      //color: red;
+    }
+  }
