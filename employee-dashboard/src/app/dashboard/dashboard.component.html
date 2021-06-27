@@ -1,31 +1,36 @@
 <div class="container">
-<div class="header">
-  <h4>Home</h4>
-</div>
-<div class="title">
-  <h2>Employee List</h2>
-  <button style="float: right;" (click)="updateEmployee('add')">Add</button>
-</div>
+  <div class="header">
+    <h4>Home</h4>
+  </div>
+  <div class="title">
+    <h2>Employee List</h2>
+    <button style="float: right" (click)="updateEmployee('add')">Add</button>
+  </div>
 
-<div class="row">
-  <div class="col">
-    <form class="example-form">
-      <mat-form-field class="example-full-width" appearance="fill">
-        <mat-label>Name</mat-label>
-        <input type="text"
-               placeholder="Pick one"
-               aria-label="Name"
-               matInput
-               [formControl]="nameControl"
-               [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let name of filteredNames | async" [value]="name">
-            {{name}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
+  <div class="row">
+    <div class="col">
+      <form class="example-form">
+        <mat-form-field class="example-full-width" appearance="fill">
+          <mat-label>Name</mat-label>
+          <input
+            type="text"
+            placeholder="Pick one"
+            aria-label="Name"
+            matInput
+            [formControl]="nameControl"
+            [matAutocomplete]="auto"
+          />
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option
+              *ngFor="let name of filteredNames | async"
+              [value]="name"
+            >
+              {{ name }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
 
-      <mat-form-field class="example-full-width" appearance="fill">
+        <!-- <mat-form-field class="example-full-width" appearance="fill">
         <mat-label>Address</mat-label>
         <input type="text"
                placeholder="Pick one"
@@ -53,92 +58,92 @@
             {{comp}}
           </mat-option>
         </mat-autocomplete>
-      </mat-form-field>
-    </form>
+      </mat-form-field> -->
+      </form>
 
-    <ngx-datatable
-      class="material"
-      [limit]="10"
-      [rows]="this.employees"
-      [columns]="columns"
-      [loadingIndicator]="loadingIndicator"
-      [rowHeight]="'auto'"
-      [columnMode]="'force'"
-      [footerHeight]="50"
-    >
-      <ngx-datatable-column name="Name" [sortable]="true">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          {{ row.name }}
-        </ng-template>
-      </ngx-datatable-column>
+      <ngx-datatable
+        class="material"
+        [limit]="10"
+        [rows]="this.filteredEmployees"
+        [columns]="columns"
+        [loadingIndicator]="loadingIndicator"
+        [rowHeight]="'auto'"
+        [columnMode]="'force'"
+        [footerHeight]="50"
+      >
+        <ngx-datatable-column name="Name" [sortable]="true">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.name }}
+          </ng-template>
+        </ngx-datatable-column>
 
-      <ngx-datatable-column name="Address" [sortable]="true">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          {{ row.address.street }}
-        </ng-template>
-      </ngx-datatable-column>
+        <ngx-datatable-column name="Address" [sortable]="true">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.address.street }}
+          </ng-template>
+        </ngx-datatable-column>
 
-      <ngx-datatable-column name="Company" [sortable]="true">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          <div class="date-font">
-            {{ row.company.name }}
-          </div>
-        </ng-template>
-      </ngx-datatable-column>
+        <ngx-datatable-column name="Company" [sortable]="true">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="date-font">
+              {{ row.company.name }}
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
 
-      <ngx-datatable-column name="Actions">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          <button class="icons" title="Edit" (click)="updateEmployee(row)">
-            <em class="fas fa-pen"></em> Edit
-          </button>
-          <button class="icons" title="Delete" (click)="deleteEmployee(row)">
-            <em class="fas fa-trash-alt"> Delete</em>
-          </button>
-        </ng-template>
-      </ngx-datatable-column>
-    </ngx-datatable>
+        <ngx-datatable-column name="Actions">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <button class="icons" title="Edit" (click)="updateEmployee(row)">
+              <em class="fas fa-pen"></em> Edit
+            </button>
+            <button class="icons" title="Delete" (click)="deleteEmployee(row)">
+              <em class="fas fa-trash-alt"> Delete</em>
+            </button>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
 
-    <div class="title">
-      <h3>Deleted Employee List</h3>
+      <div class="title">
+        <h3>Deleted Employee List</h3>
+      </div>
+
+      <ngx-datatable
+        class="material"
+        [limit]="10"
+        [rows]="this.deletedEmployees"
+        [columns]="columns"
+        [rowHeight]="'auto'"
+        [columnMode]="'force'"
+        [footerHeight]="50"
+      >
+        <ngx-datatable-column name="Name" [sortable]="true">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.name }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Address" [sortable]="true">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.address.street }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Company" [sortable]="true">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="date-font">
+              {{ row.company.name }}
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Actions">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <button class="icons" title="Edit" (click)="restoreEmployee(row)">
+              <em class="fas fa-pen"></em> Restore
+            </button>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
     </div>
-
-    <ngx-datatable
-      class="material"
-      [limit]="10"
-      [rows]="this.deletedEmployees"
-      [columns]="columns"
-      [rowHeight]="'auto'"
-      [columnMode]="'force'"
-      [footerHeight]="50"
-    >
-      <ngx-datatable-column name="Name" [sortable]="true">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          {{ row.name }}
-        </ng-template>
-      </ngx-datatable-column>
-
-      <ngx-datatable-column name="Address" [sortable]="true">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          {{ row.address.street }}
-        </ng-template>
-      </ngx-datatable-column>
-
-      <ngx-datatable-column name="Company" [sortable]="true">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          <div class="date-font">
-            {{ row.company.name }}
-          </div>
-        </ng-template>
-      </ngx-datatable-column>
-
-      <ngx-datatable-column name="Actions">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          <button class="icons" title="Edit" (click)="restoreEmployee(row)">
-            <em class="fas fa-pen"></em> Restore
-          </button>
-        </ng-template>
-      </ngx-datatable-column>
-    </ngx-datatable>
   </div>
-</div>
 </div>

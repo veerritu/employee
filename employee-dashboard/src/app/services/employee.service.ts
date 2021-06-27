@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Employee } from '../models/employee.model';
 import { EmployeeData } from '../models/employee-data';
@@ -32,7 +31,6 @@ export class EmployeeService {
   }
 
   addEmployee(user: Employee): Observable<Employee> {
-   // user.id = null;
     return this.http.post<Employee>(this.apiurl, user, this.httpOptions).pipe(
       tap(data => console.log(data)),
       catchError(this.handleError)

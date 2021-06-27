@@ -16,7 +16,6 @@ export class DashboardComponent implements OnInit {
 
   employees = [];
   deletedEmployees = []
-  stopIterartor = false;
   columns = [
     { name: 'Name' },
     { name: 'Address' },
@@ -32,6 +31,7 @@ export class DashboardComponent implements OnInit {
   nameArr = [];
   addArr = [];
   compArr = [];
+  filteredEmployees: any[];
   constructor(
     private employeeService: EmployeeService,
     private dialog: MatDialog,
@@ -40,55 +40,47 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.getAllEmployeesList();
-    this.filteredCompany = this.companyControl.valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filter(value, this.compArr))
-      );
+
+    // filter on employee name
     this.filteredNames = this.nameControl.valueChanges
       .pipe(
         startWith(''),
         map(value => this._filter(value,
           this.nameArr))
       );
-    this.filteredAddress = this.addressControl.valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filter(value, this.addArr))
-      );
 
     this.filteredNames.subscribe((data) => {
-      if (data) {
-        var i = 0;
-        while (!this.stopIterartor && i < this.employees.length) {
-          if (this.employees[i].name === this.nameControl.value) {
-            // this.employees = [];
-            this.employees = [this.employees[i]];
-            this.employees = [...this.employees];
-            this.stopIterartor = true;
-            this.openSnackBar('Filtered value  -' + this.nameControl.value)
-          } else {
-            i++;
-            this.getAllEmployeesList();
-            this.employees = [...this.employees];
-          }
-
-        }
-
+      if (this.nameControl.value === '') {
+        this.getAllEmployeesList();
       }
+      this.filteredEmployees = [];
+      data.forEach(item => {
+        const matcheditems = this.employees.filter(x => x.name === item);
+        this.filteredEmployees = [...matcheditems];
+      });
     });
+
+    // this.filteredCompany = this.companyControl.valueChanges
+    //   .pipe(
+    //     startWith(''),
+    //     map(value => this._filter(value, this.compArr))
+    //   );
+
+    // this.filteredAddress = this.addressControl.valueChanges
+    //   .pipe(
+    //     startWith(''),
+    //     map(value => this._filter(value, this.addArr))
+    //   );
   }
 
   private _filter(value: string, arr: any): string[] {
-    this.stopIterartor = false;
     const filterValue = value.toLowerCase();
     const val = arr.filter(option => option.toLowerCase().includes(filterValue));
-
-
     return val;
   }
 
-  updateEmployee(emp) {
+  // edit and add employee data
+  updateEmployee(emp: any) {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = true;
@@ -137,7 +129,6 @@ export class DashboardComponent implements OnInit {
           };
           this.employeeService.addEmployee(data).subscribe((response) => {
             if (response) {
-              // this.employees.push(response);
               this.getAllEmployeesList();
               this.employees = [...this.employees];
               this.openSnackBar('Employee added successfully');
@@ -162,7 +153,9 @@ export class DashboardComponent implements OnInit {
       });
 
   }
-  deleteEmployee(emp) {
+
+  // delete employee data
+  deleteEmployee(emp: Employee) {
     this.employeeService.deleteEmployee(emp.id).subscribe((response) => {
       this.getAllEmployeesList();
       this.employees = [...this.employees];
@@ -172,7 +165,8 @@ export class DashboardComponent implements OnInit {
     this.deletedEmployees = [...this.deletedEmployees];
   }
 
-  restoreEmployee(emp) {
+  // restore deleted employee
+  restoreEmployee(emp: Employee) {
     this.employeeService.addEmployee(emp).subscribe((response) => {
       if (response) {
         this.getAllEmployeesList();
@@ -188,11 +182,12 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-
+  // get all employees
   getAllEmployeesList() {
     this.employeeService.getAllEmployees().subscribe((response) => {
       if (response) {
         this.employees = response;
+        this.filteredEmployees = response;
         this.employees.forEach(element => {
           this.addArr.push(element.address.street);
           this.nameArr.push(element.name);
