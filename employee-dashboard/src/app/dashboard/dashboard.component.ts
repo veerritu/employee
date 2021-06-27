@@ -1,11 +1,12 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { EmployeeService } from '../services/employee.service';
 import { EditEmployeeComponent } from './edit-employee/edit-employee.component';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Employee } from '../models/employee.model';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -15,33 +16,76 @@ export class DashboardComponent implements OnInit {
 
   employees = [];
   deletedEmployees = []
+  stopIterartor = false;
   columns = [
     { name: 'Name' },
     { name: 'Address' },
     { name: 'Company' },
     { name: 'Actions' }
   ]
-  myControl = new FormControl();
-  options: string[] = ['One', 'Two', 'Three'];
-  filteredOptions: Observable<string[]>;
+  nameControl = new FormControl();
+  addressControl = new FormControl();
+  companyControl = new FormControl();
+  filteredNames: Observable<string[]>;
+  filteredAddress: Observable<string[]>;
+  filteredCompany: Observable<string[]>;
+  nameArr = [];
+  addArr = [];
+  compArr = [];
   constructor(
     private employeeService: EmployeeService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit() {
     this.getAllEmployeesList();
-    this.filteredOptions = this.myControl.valueChanges
+    this.filteredCompany = this.companyControl.valueChanges
       .pipe(
         startWith(''),
-        map(value => this._filter(value))
+        map(value => this._filter(value, this.compArr))
       );
+    this.filteredNames = this.nameControl.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value,
+          this.nameArr))
+      );
+    this.filteredAddress = this.addressControl.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value, this.addArr))
+      );
+
+    this.filteredNames.subscribe((data) => {
+      if (data) {
+        var i = 0;
+        while (!this.stopIterartor && i < this.employees.length) {
+          if (this.employees[i].name === this.nameControl.value) {
+            // this.employees = [];
+            this.employees = [this.employees[i]];
+            this.employees = [...this.employees];
+            this.stopIterartor = true;
+            this.openSnackBar('Filtered value  -' + this.nameControl.value)
+          } else {
+            i++;
+            this.getAllEmployeesList();
+            this.employees = [...this.employees];
+          }
+
+        }
+
+      }
+    });
   }
 
-  private _filter(value: string): string[] {
+  private _filter(value: string, arr: any): string[] {
+    this.stopIterartor = false;
     const filterValue = value.toLowerCase();
+    const val = arr.filter(option => option.toLowerCase().includes(filterValue));
 
-    return this.employees.filter(option => option.name.toLowerCase().includes(filterValue));
+
+    return val;
   }
 
   updateEmployee(emp) {
@@ -68,11 +112,35 @@ export class DashboardComponent implements OnInit {
     this.dialog.open(EditEmployeeComponent, dialogConfig).afterClosed()
       .subscribe(item => {
         if (emp === 'add') {
-          item.id = null;
-          this.employeeService.addEmployee(item).subscribe((response) => {
+          const data: Employee = {
+            name: item.name,
+            phone: '',
+            address: {
+              street: item.address,
+              suite: '',
+              city: '',
+              geo: {
+                lat: '',
+                lng: ''
+              },
+              zipcode: ''
+            },
+            company: {
+              name: item.company,
+              bs: '',
+              catchPhrase: ''
+            },
+            email: '',
+            id: null,
+            username: '',
+            website: ''
+          };
+          this.employeeService.addEmployee(data).subscribe((response) => {
             if (response) {
-              this.employees.push(response);
+              // this.employees.push(response);
+              this.getAllEmployeesList();
               this.employees = [...this.employees];
+              this.openSnackBar('Employee added successfully');
             }
           });
         } else {
@@ -83,7 +151,7 @@ export class DashboardComponent implements OnInit {
               element.company.name = item.company;
               this.employeeService.updateEmployee(item).subscribe((response) => {
                 if (response) {
-                  this.employees = [...this.employees];
+                  this.openSnackBar('Employee data updated successfully');
                 }
               });
             }
@@ -96,7 +164,9 @@ export class DashboardComponent implements OnInit {
   }
   deleteEmployee(emp) {
     this.employeeService.deleteEmployee(emp.id).subscribe((response) => {
+      this.getAllEmployeesList();
       this.employees = [...this.employees];
+      this.openSnackBar('Employee deleted successfully');
     });
     this.deletedEmployees.push(emp);
     this.deletedEmployees = [...this.deletedEmployees];
@@ -105,8 +175,9 @@ export class DashboardComponent implements OnInit {
   restoreEmployee(emp) {
     this.employeeService.addEmployee(emp).subscribe((response) => {
       if (response) {
-        this.employees.push(response);
+        this.getAllEmployeesList();
         this.employees = [...this.employees];
+        this.openSnackBar('Employee restored successfully');
       }
     });
     for (let i = 0; i < this.deletedEmployees.length; i++) {
@@ -122,9 +193,21 @@ export class DashboardComponent implements OnInit {
     this.employeeService.getAllEmployees().subscribe((response) => {
       if (response) {
         this.employees = response;
+        this.employees.forEach(element => {
+          this.addArr.push(element.address.street);
+          this.nameArr.push(element.name);
+          this.compArr.push(element.company.name);
+        })
       }
     });
 
+  }
+
+  openSnackBar(message: string) {
+    this.snackBar.open(message, 'X', {
+      duration: 3000,
+      verticalPosition: 'top'
+    });
   }
 }
 

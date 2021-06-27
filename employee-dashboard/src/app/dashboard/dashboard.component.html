@@ -1,28 +1,67 @@
+<div class="container">
+<div class="header">
+  <h4>Home</h4>
+</div>
 <div class="title">
-  <h3>Employee List</h3>
+  <h2>Employee List</h2>
   <button style="float: right;" (click)="updateEmployee('add')">Add</button>
 </div>
 
 <div class="row">
   <div class="col">
     <form class="example-form">
-        <mat-form-field class="example-full-width" appearance="fill">
-          <mat-label>Number</mat-label>
-          <input type="text"
-                 placeholder="Pick one"
-                 aria-label="Number"
-                 matInput
-                 [formControl]="myControl"
-                 [matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete">
-          </mat-autocomplete>
-        </mat-form-field>
-      </form>
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>Name</mat-label>
+        <input type="text"
+               placeholder="Pick one"
+               aria-label="Name"
+               matInput
+               [formControl]="nameControl"
+               [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let name of filteredNames | async" [value]="name">
+            {{name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>Address</mat-label>
+        <input type="text"
+               placeholder="Pick one"
+               aria-label="Address"
+               matInput
+               [formControl]="addressControl"
+               [matAutocomplete]="auto3">
+        <mat-autocomplete #auto1="matAutocomplete">
+          <mat-option *ngFor="let address of filteredAddress | async" [value]="address">
+            {{address}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>Company</mat-label>
+        <input type="text"
+               placeholder="Pick one"
+               aria-label="Company"
+               matInput
+               [formControl]="companyControl"
+               [matAutocomplete]="auto">
+        <mat-autocomplete #auto2="matAutocomplete">
+          <mat-option *ngFor="let comp of filteredCompany | async" [value]="comp">
+            {{comp}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </form>
+
     <ngx-datatable
       class="material"
       [limit]="10"
       [rows]="this.employees"
       [columns]="columns"
+      [loadingIndicator]="loadingIndicator"
       [rowHeight]="'auto'"
       [columnMode]="'force'"
       [footerHeight]="50"
@@ -101,4 +140,5 @@
       </ngx-datatable-column>
     </ngx-datatable>
   </div>
+</div>
 </div>

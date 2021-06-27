@@ -6,4 +6,30 @@
     margin: auto;
     text-align: center;
     padding: 20px 0;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.header {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    padding: 6px;
+    margin: 3px 0;
+}
+
+h2 {
+    margin: auto;
+}
+
+.container {
+    padding: 0 20px;
+}
+
+button {
+    background-color: gray;
+    color: #fff;
+}
+
+.example-full-width {
+    margin: 0 30px;
 }
