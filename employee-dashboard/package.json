@@ -24,9 +24,7 @@
     "@angular/router": "~8.2.14",
     "@swimlane/ngx-datatable": "^16.1.1",
     "angular-in-memory-web-api": "^0.11.0",
-    "hammerjs": "^2.0.8",
     "rxjs": "~6.4.0",
-    "save-dev": "0.0.1-security",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
   },
